@@ -1,0 +1,540 @@
+/* レイアウト。色や文字は theme.css が変数で決める */
+
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f4f4f4;
+  --color-text: #222222;
+  --color-muted: #666666;
+  --color-accent: #3366cc;
+  --color-accent-2: #cc3366;
+  --color-border: #dddddd;
+  --font-body: system-ui, sans-serif;
+  --font-heading: system-ui, sans-serif;
+  --radius: 8px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --header-height: 64px;
+  --gutter: clamp(16px, 4vw, 32px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height);
+  /* スマートフォンを横向きにしたときに、ブラウザが文字を勝手に大きくしないようにする */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  line-height: 1.3;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(1040px + var(--gutter) * 2);
+  margin: 0 auto;
+  /* ノッチのあるスマートフォンを横向きにしたときも、左右の余白を確保する */
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+}
+
+/* ヘッダー */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--header-height);
+}
+
+.site-logo {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.site-nav__list {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav__list a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.site-nav__list a:hover,
+.site-nav__list a:focus-visible {
+  background: var(--color-surface);
+  color: var(--color-accent);
+}
+
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.nav-toggle__bar {
+  display: block;
+  height: 2px;
+  margin: 5px 0;
+  background: var(--color-text);
+}
+
+@media (max-width: 767px) {
+  .nav-toggle {
+    display: block;
+  }
+
+  .site-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow);
+  }
+
+  .site-nav.is-open {
+    display: block;
+    /* 横向きのスマートフォンのように高さが低い画面でも、メニューを最後までスクロールできるようにする */
+    max-height: calc(100vh - var(--header-height));
+    max-height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
+  }
+
+  .site-nav__list {
+    flex-direction: column;
+    gap: 0;
+    padding: 8px var(--gutter) 16px;
+  }
+
+  .site-nav__list a {
+    padding: 12px;
+  }
+}
+
+/* セクション共通 */
+
+.section {
+  padding: clamp(40px, 8vw, 72px) 0;
+}
+
+.section__title {
+  margin: 0 0 clamp(20px, 4vw, 32px);
+  font-size: clamp(1.4rem, 1.1rem + 1.5vw, 1.9rem);
+}
+
+.tag {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* プロフィール */
+
+.section--hero {
+  padding-top: clamp(32px, 6vw, 56px);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: clamp(140px, 18vw, 180px) minmax(0, 1fr);
+  grid-template-areas:
+    "photo text"
+    "status status";
+  gap: clamp(20px, 4vw, 40px);
+  align-items: center;
+}
+
+@media (min-width: 960px) {
+  .hero {
+    grid-template-columns: 180px minmax(0, 1fr) minmax(280px, 340px);
+    grid-template-areas: "photo text status";
+  }
+}
+
+.hero__photo {
+  grid-area: photo;
+}
+
+.hero__photo img {
+  border-radius: 50%;
+  border: 4px solid var(--color-accent);
+  background: var(--color-surface);
+}
+
+.hero__text {
+  grid-area: text;
+}
+
+.hero__hello {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.hero__name {
+  margin: 0 0 8px;
+  font-size: clamp(2.2rem, 1.6rem + 3vw, 3.2rem);
+}
+
+.hero__lead {
+  margin: 0 0 12px;
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.2rem);
+}
+
+.hero__hobby {
+  margin: 0;
+}
+
+.status-card {
+  grid-area: status;
+  max-width: 420px;
+  padding: 20px 24px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow);
+}
+
+.status-card__title {
+  margin: 0 0 8px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--color-accent);
+}
+
+.status-card__list {
+  margin: 0;
+}
+
+.status-card__row {
+  display: grid;
+  grid-template-columns: 7em 1fr;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.status-card__row:last-child {
+  border-bottom: none;
+}
+
+.status-card__row dt {
+  color: var(--color-muted);
+}
+
+.status-card__row dd {
+  margin: 0;
+}
+
+.status-card__mult {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--color-accent-2);
+  color: var(--color-bg);
+  font-weight: 700;
+}
+
+@media (max-width: 599px) {
+  .hero {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "photo"
+      "text"
+      "status";
+    justify-items: center;
+    text-align: center;
+  }
+
+  .hero__photo img {
+    width: 140px;
+    height: 140px;
+  }
+
+  .status-card {
+    width: 100%;
+    text-align: left;
+  }
+
+  .status-card__row {
+    grid-template-columns: 5.5em 1fr;
+  }
+}
+
+/* スキル */
+
+/* min(240px, 100%) にしておくと、240px より狭い画面でも列がはみ出さない */
+.skill-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 20px 32px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.skill__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.skill__name {
+  font-weight: 700;
+}
+
+.skill__note {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.skill-bar {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.skill-bar__fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--level, 0) * 1%);
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-2));
+  transition: width 1s ease-out;
+}
+
+/* JavaScript が動かないときは data-level の値を CSS では読めないので、バーを満たして見せる */
+html:not(.js) .skill-bar__fill {
+  width: 100%;
+  opacity: 0.5;
+}
+
+.skill-cert {
+  margin: 0;
+}
+
+/* 経歴 */
+
+.timeline {
+  margin: 0;
+  padding: 0 0 0 24px;
+  list-style: none;
+  border-left: 3px solid var(--color-accent);
+}
+
+.timeline__item {
+  position: relative;
+  padding: 0 0 24px 16px;
+}
+
+.timeline__item::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: -33px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 3px solid var(--color-accent);
+}
+
+.timeline__date {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.timeline__body {
+  margin: 0;
+}
+
+/* 作品 */
+
+.works {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease;
+}
+
+.work-card:hover {
+  transform: translateY(-4px);
+}
+
+.work-card__title {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+}
+
+.work-card__desc {
+  margin: 0 0 16px;
+  flex-grow: 1;
+}
+
+.work-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.work-card__tags li {
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.work-card__link {
+  font-weight: 700;
+}
+
+/* 連絡先 */
+
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact__link {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid var(--color-accent);
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.contact__link:hover,
+.contact__link:focus-visible {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+/* フッター */
+
+.site-footer {
+  padding: 24px 0 max(24px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* フェードイン。初期状態の透明は JavaScript が動いたときだけ付ける */
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
