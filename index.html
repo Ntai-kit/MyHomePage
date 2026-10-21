@@ -25,17 +25,19 @@
       <nav class="site-nav" id="site-nav" aria-label="ページ内メニュー">
         <ul class="site-nav__list">
           <li><a href="#profile">プロフィール</a></li>
+          <li><a href="#works">作品</a></li>
           <li><a href="#skills">スキル</a></li>
           <li><a href="#career">経歴</a></li>
-          <li><a href="#works">作品</a></li>
           <li><a href="#contact">連絡先</a></li>
         </ul>
+        <!-- 今見ている節を囲むカギ形の枠。位置は js/main.js の initNavCursor が決める -->
+        <span class="nav-cursor" aria-hidden="true"></span>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="section section--hero reveal" id="profile">
+    <section class="section section--hero" id="profile">
       <div class="container hero">
         <div class="hero__photo">
           <!-- 書き換える: 自分の写真を images/ に入れて src を変える -->
@@ -45,10 +47,9 @@
           <p class="hero__hello">はじめまして</p>
           <h1 class="hero__name">Ntai</h1>
           <p class="hero__lead">ゆるめの情報工学徒。朝が4倍弱点。</p>
-          <p class="hero__hobby"><span class="tag">趣味</span>Steamでゲーム漁り</p>
         </div>
         <aside class="status-card" aria-label="ステータス">
-          <p class="status-card__title">STATUS</p>
+          <p class="status-card__title">ステータス</p>
           <dl class="status-card__list">
             <div class="status-card__row">
               <dt>なまえ</dt>
@@ -71,55 +72,7 @@
       </div>
     </section>
 
-    <section class="section reveal" id="skills">
-      <div class="container">
-        <h2 class="section__title">スキル</h2>
-        <!-- 書き換える: 言語やツールの名前と、data-level（0〜100）を自分に合わせる -->
-        <ul class="skill-list">
-          <li class="skill">
-            <div class="skill__head"><span class="skill__name">HTML / CSS</span><span class="skill__note">仮の内容</span></div>
-            <div class="skill-bar" data-level="70"><span class="skill-bar__fill"></span></div>
-          </li>
-          <li class="skill">
-            <div class="skill__head"><span class="skill__name">JavaScript</span><span class="skill__note">仮の内容</span></div>
-            <div class="skill-bar" data-level="55"><span class="skill-bar__fill"></span></div>
-          </li>
-          <li class="skill">
-            <div class="skill__head"><span class="skill__name">Python</span><span class="skill__note">仮の内容</span></div>
-            <div class="skill-bar" data-level="60"><span class="skill-bar__fill"></span></div>
-          </li>
-          <li class="skill">
-            <div class="skill__head"><span class="skill__name">Git / GitHub</span><span class="skill__note">仮の内容</span></div>
-            <div class="skill-bar" data-level="45"><span class="skill-bar__fill"></span></div>
-          </li>
-        </ul>
-        <!-- 書き換える: 資格がなければこの段落ごと消す -->
-        <p class="skill-cert"><span class="tag">資格</span>（仮の内容）基本情報技術者試験 など</p>
-      </div>
-    </section>
-
-    <section class="section reveal" id="career">
-      <div class="container">
-        <h2 class="section__title">経歴</h2>
-        <!-- 書き換える: 年月と内容を自分の経歴にする -->
-        <ol class="timeline">
-          <li class="timeline__item">
-            <p class="timeline__date">20XX年4月</p>
-            <p class="timeline__body">○○大学 情報工学科 入学（仮の内容）</p>
-          </li>
-          <li class="timeline__item">
-            <p class="timeline__date">20XX年8月</p>
-            <p class="timeline__body">○○株式会社 サマーインターン参加（仮の内容）</p>
-          </li>
-          <li class="timeline__item">
-            <p class="timeline__date">20XX年3月</p>
-            <p class="timeline__body">○○大学 情報工学科 卒業見込み（仮の内容）</p>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="section reveal" id="works">
+    <section class="section" id="works">
       <div class="container">
         <h2 class="section__title">作品・実績</h2>
         <!-- 書き換える: 作品ごとにカードを1つ作る。画像は images/ に入れる -->
@@ -152,7 +105,58 @@
       </div>
     </section>
 
-    <section class="section reveal" id="contact">
+    <section class="section" id="skills">
+      <div class="container">
+        <h2 class="section__title">スキル</h2>
+        <!-- 書き換える: 言語やツールの名前と、data-level（0〜100）を自分に合わせる。数値の文字と aria-label は JavaScript が data-level から作る -->
+        <ul class="skill-list">
+          <li class="skill">
+            <div class="skill__head"><span class="skill__name">HTML / CSS</span><span class="skill__note">仮の内容</span></div>
+            <div class="skill-bar" data-level="70"><span class="skill-bar__fill"></span></div>
+          </li>
+          <li class="skill">
+            <div class="skill__head"><span class="skill__name">JavaScript</span><span class="skill__note">仮の内容</span></div>
+            <div class="skill-bar" data-level="50"><span class="skill-bar__fill"></span></div>
+          </li>
+          <li class="skill">
+            <div class="skill__head"><span class="skill__name">Python</span><span class="skill__note">仮の内容</span></div>
+            <div class="skill-bar" data-level="60"><span class="skill-bar__fill"></span></div>
+          </li>
+          <li class="skill">
+            <div class="skill__head"><span class="skill__name">Git / GitHub</span><span class="skill__note">仮の内容</span></div>
+            <div class="skill-bar" data-level="40"><span class="skill-bar__fill"></span></div>
+          </li>
+        </ul>
+        <!-- 書き換える: 資格がなければこのまとまりごと消す -->
+        <div class="skill-cert">
+          <h3 class="subsection__title">資格</h3>
+          <p class="skill-cert__body">（仮の内容）基本情報技術者試験 など</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="career">
+      <div class="container">
+        <h2 class="section__title">経歴</h2>
+        <!-- 書き換える: 年月と内容を自分の経歴にする -->
+        <ol class="timeline">
+          <li class="timeline__item">
+            <p class="timeline__date">20XX年4月</p>
+            <p class="timeline__body">○○大学 情報工学科 入学（仮の内容）</p>
+          </li>
+          <li class="timeline__item">
+            <p class="timeline__date">20XX年8月</p>
+            <p class="timeline__body">○○株式会社 サマーインターン参加（仮の内容）</p>
+          </li>
+          <li class="timeline__item">
+            <p class="timeline__date">20XX年3月</p>
+            <p class="timeline__body">○○大学 情報工学科 卒業見込み（仮の内容）</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
       <div class="container">
         <h2 class="section__title">連絡先</h2>
         <!-- 書き換える: ページに載せてよい連絡先だけを残す -->

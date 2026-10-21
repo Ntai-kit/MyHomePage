@@ -3,15 +3,24 @@
 :root {
   --color-bg: #1b2838;
   --color-surface: #22344a;
+  --color-pressed: #2c4560;
   --color-text: #e6edf5;
   --color-muted: #8fa3ba;
   --color-accent: #66c0f4;
+  --color-accent-pressed: #4aa8de;
   --color-accent-2: #b57cff;
   --color-border: #34506e;
+  --color-on-accent: #171a21;
+  /* 作品カードを反転したときの色（本文の色を背景に、ページの背景色を文字にする） */
+  --color-invert-bg: #e6edf5;
+  --color-invert-pressed: #c3d0de;
+  --color-invert-text: #1b2838;
+  --color-invert-muted: #445a75;
   --font-body: "Noto Sans JP", "Meiryo", sans-serif;
   --font-heading: "DotGothic16", "Noto Sans JP", monospace;
   --radius: 4px;
-  --shadow: 0 0 0 1px rgba(102, 192, 244, 0.15), 0 8px 24px rgba(0, 0, 0, 0.35);
+  /* 文字や枠をくっきり見せるため、光彩や影は付けない */
+  --shadow: none;
   color-scheme: dark;
 }
 
@@ -28,7 +37,6 @@ body {
 
 .site-logo {
   color: var(--color-accent);
-  text-shadow: 0 0 8px rgba(102, 192, 244, 0.6);
 }
 
 .section__title::before {
@@ -39,22 +47,26 @@ body {
 .hero__photo img {
   border-radius: var(--radius);
   border: 2px solid var(--color-accent);
-  box-shadow: 0 0 16px rgba(102, 192, 244, 0.45);
 }
 
-.hero__name {
-  text-shadow: 0 0 12px rgba(181, 124, 255, 0.55);
+/* 押せないラベルは、角の丸みが小さい四角い細枠にする（押せる連絡先の丸いボタンと形を分ける） */
+.work-card__tags li {
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-muted);
+  border-radius: 2px;
+  color: var(--color-muted);
 }
 
-.tag {
-  color: #171a21;
-}
-
+/* ステータスカードは全部ドット文字にし、行の高さを広げて読みやすくする */
 .status-card {
   border: 2px solid var(--color-accent);
   background: #101822;
-  box-shadow: inset 0 0 0 4px #101822, inset 0 0 0 6px var(--color-border), 0 0 18px rgba(102, 192, 244, 0.25);
+  box-shadow: inset 0 0 0 4px #101822, inset 0 0 0 6px var(--color-border);
   font-family: var(--font-heading);
+}
+
+.status-card__list {
+  line-height: 2;
 }
 
 .status-card__row--weak dd {
@@ -66,13 +78,14 @@ body {
   color: #ffffff;
 }
 
+/* 習熟度のバーを 10 マスに区切る */
 .skill-bar {
+  height: 14px;
+  border: none;
   border-radius: 0;
   background: #101822;
-}
-
-.skill-bar__fill {
-  box-shadow: 0 0 10px rgba(102, 192, 244, 0.6);
+  -webkit-mask: repeating-linear-gradient(90deg, #000 0 calc(10% - 3px), transparent calc(10% - 3px) 10%);
+  mask: repeating-linear-gradient(90deg, #000 0 calc(10% - 3px), transparent calc(10% - 3px) 10%);
 }
 
 .timeline__item::before {
@@ -80,12 +93,3 @@ body {
   transform: rotate(45deg);
 }
 
-.work-card:hover {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 18px rgba(102, 192, 244, 0.3);
-}
-
-.contact__link:hover,
-.contact__link:focus-visible {
-  color: #171a21;
-}
