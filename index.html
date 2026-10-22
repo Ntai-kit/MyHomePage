@@ -131,7 +131,9 @@
         <!-- 一覧は js/main.js の initSteamGames が data/steam-games.json から作る。
              JSON は GitHub Actions（.github/workflows/steam-games.yml）が毎日 Steam から取って更新する -->
         <div class="games__bar">
-          <p class="games__summary" id="games-summary">読み込んでいます…</p>
+          <!-- 届いたあとの「Steam で2時間以上遊んだゲーム 31 本（…時点）」と同じくらいの長さにして、
+               入れ替わったときに折り返しが変わらないようにする -->
+          <p class="games__summary" id="games-summary">Steam で2時間以上遊んだゲームの一覧を読み込んでいます…</p>
           <div class="games__sort">
             <label for="games-sort">並べ替え</label>
             <select class="games__select" id="games-sort" name="sort">
@@ -142,9 +144,17 @@
             </select>
           </div>
         </div>
-        <ul class="games" id="games-list"></ul>
-        <!-- 1行に収まらないときだけ js/main.js が出す -->
-        <div class="games__more-wrap" hidden>
+        <!-- 読み込むまでは、カードと同じ大きさの骨組みを1行目の分だけ見せ、届いたときに下の節が押し下げられないようにする。
+             中身は js/main.js が入れ替える（1行目より後ろの骨組みは css/base.css で隠す） -->
+        <ul class="games" id="games-list" aria-busy="true">
+          <li class="games__skeleton" aria-hidden="true"></li>
+          <li class="games__skeleton" aria-hidden="true"></li>
+          <li class="games__skeleton" aria-hidden="true"></li>
+          <li class="games__skeleton" aria-hidden="true"></li>
+        </ul>
+        <!-- 1行に収まらないときだけ出す。読み込み中は場所だけ取っておき（css/base.css）、
+             届いてから要らないと分かったら js/main.js が隠す -->
+        <div class="games__more-wrap">
           <button class="contact__link games__more" type="button" aria-controls="games-list" aria-expanded="false">もっとみる</button>
         </div>
       </div>

@@ -836,6 +836,8 @@ html:not(.js) .skill-bar__fill {
   color: var(--color-muted);
   font-size: var(--fs-small);
   font-weight: 700;
+  /* 縦に並ぶ年月の数字の幅をそろえる */
+  font-variant-numeric: tabular-nums;
 }
 
 .timeline__body {
@@ -963,6 +965,47 @@ html:not(.js) .skill-bar__fill {
   line-height: 1.5;
   font-variant-numeric: tabular-nums;
   transition: color 0.2s ease;
+}
+
+/* 読み込み中の骨組み。1行目だけを見せるため、2行目からの行の高さを 0 にして切り落とす */
+.games[aria-busy="true"] {
+  grid-template-rows: auto;
+  grid-auto-rows: 0;
+  row-gap: 0;
+  overflow: hidden;
+}
+
+/* カードと同じ枠に、画像の場所と本文の場所を取る。動きは付けない */
+.games__skeleton {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.games__skeleton::before {
+  content: "";
+  display: block;
+  aspect-ratio: 460 / 215;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--color-pressed);
+}
+
+/* 本文の高さ。上下の余白、名前の1行、補足の2行（合計時間と最終プレイ）、その間の 2px を足した値 */
+.games__skeleton::after {
+  content: "";
+  display: block;
+  height: calc(var(--space-3) + var(--space-4) + 1.5rem + var(--fs-small) * 1.5 * 2 + 4px);
+}
+
+/* 「もっとみる」は届いてから出すかを決めるので、読み込み中は見えないまま場所だけ取る */
+.games[aria-busy="true"] ~ .games__more-wrap {
+  visibility: hidden;
+}
+
+/* JavaScript が動かないときは中身が入らないので、骨組みも「もっとみる」も出さない */
+html:not(.js) .games__skeleton,
+html:not(.js) .games__more-wrap {
+  display: none;
 }
 
 /* 「もっとみる」で開いたあとは、一覧の高さに上限を付け、その中だけでスクロールする。

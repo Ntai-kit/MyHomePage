@@ -449,9 +449,18 @@ function initSteamGames() {
     if (games.length) applyLimit();
   });
 
+  // 読み込み中の骨組み（index.html）を外す。カードがあるときは render が入れ替え、「もっとみる」も applyLimit が決める
+  function finishLoading() {
+    list.removeAttribute('aria-busy');
+    if (games.length) return;
+    list.replaceChildren();
+    if (moreWrap) moreWrap.hidden = true;
+  }
+
   loadSteamGames()
     .then((data) => {
       games = Array.isArray(data.games) ? data.games : [];
+      finishLoading();
       if (!games.length) {
         summary.textContent = 'まだゲームの記録がありません。';
         select.disabled = true;
@@ -462,6 +471,7 @@ function initSteamGames() {
       render();
     })
     .catch(() => {
+      finishLoading();
       summary.textContent = 'ゲームの一覧を読み込めませんでした。時間をおいて、ページを読み込み直してください。';
       select.disabled = true;
     });
