@@ -1,0 +1,9 @@
+# ワークフローで使う Actions（actions/checkout、actions/setup-node）に新しい版が出たら、
+# GitHub が更新のプルリクエストを作る。Actions はコミットの SHA で固定しているので、
+# 中身を確かめてから取り込む（勝手には更新されない）
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

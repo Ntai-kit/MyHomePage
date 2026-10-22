@@ -21,7 +21,11 @@ jobs:
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 20
+          # その時点でサポート中の LTS の、いちばん新しい版を使う（24 から 26 のような大きな版の切り替えも自動）。
+          # 実行環境に置いてある少し古い版ではなく、毎回最新を取ってくる。
+          # スクリプトは Node の標準の機能しか使わないので、版が上がっても動きは変わらない想定
+          node-version: lts/*
+          check-latest: true
 
       - name: Steam から一覧を取る
         run: node scripts/fetch-steam-games.mjs
