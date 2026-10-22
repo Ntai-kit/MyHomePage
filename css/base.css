@@ -457,18 +457,26 @@ h3 {
     isolation: isolate;
   }
 
-  /* 後ろの画像は文字の上下に 24px はみ出すので、その分ボタンとの間をあける */
-  .title-screen__copy.has-game-image {
+  /* 後ろの画像は文字の下に 24px はみ出すので、その分ボタンとの間をあける。
+     画像の切り替え中に間が変わってボタンが動かないよう、画像の有無にかかわらず同じ間を取る。
+     後ろにある .title-screen__copy の margin に負けないよう、親を付けて指定する */
+  .title-screen__text .title-screen__copy {
     margin-bottom: var(--space-6);
   }
 
+  /* 画像は切らずに元の縦横比のまま出す。下の端を文字の下にそろえ、余った高さは文字の上へはみ出させる */
   .title-screen__copy::before {
     content: "";
     position: absolute;
-    inset: calc(var(--space-5) * -1) calc(var(--space-3) * -1);
+    left: calc(var(--space-3) * -1);
+    bottom: calc(var(--space-5) * -1);
+    width: min(calc(100% + var(--space-3) * 2), 484px);
+    aspect-ratio: 460 / 215;
     z-index: -1;
     border-radius: 2px;
-    background: var(--title-game-image) center / cover no-repeat;
+    background: var(--title-game-image) center bottom / contain no-repeat;
+    /* 文字を読みやすくするため、後ろの画像はぼかす */
+    filter: blur(4px);
     opacity: 0;
     /* js/main.js の TITLE_GAME_FADE と合わせる */
     transition: opacity 0.8s ease;
