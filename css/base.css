@@ -384,6 +384,101 @@ h3 {
   align-items: center;
 }
 
+/* 広い画面では、文字の右にゲームの画像を並べる。見出しが途中で折り返さないよう、
+   文字の列は文字の幅ぴったりに取り、残りを画像に回す（画像は 460px まで） */
+@media (min-width: 960px) {
+  .title-screen__inner:has(.title-screen__game) {
+    grid-template-columns: max-content minmax(240px, 460px);
+    justify-content: space-between;
+  }
+}
+
+/* ランダムに選んだゲームの画像。届く前から縦横比で場所を取っておき、届いたら浮かび上がらせる。
+   切り替えるときは、画像と名前をフェードアウトしてから、次のゲームでフェードインする */
+.title-screen__game {
+  /* フェードの時間。js/main.js の TITLE_GAME_FADE と合わせる */
+  --title-game-fade: 0.8s;
+  margin: 0;
+  max-width: 460px;
+}
+
+.title-screen__game-link {
+  position: relative;
+  display: block;
+  color: var(--color-text);
+}
+
+.title-screen__game-link:focus-visible {
+  outline: none;
+}
+
+.title-screen__game-image {
+  width: 100%;
+  aspect-ratio: 460 / 215;
+  border: 2px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface);
+  opacity: 0;
+  transition: opacity var(--title-game-fade) ease;
+}
+
+.title-screen__game.is-loaded .title-screen__game-image,
+.title-screen__game.is-loaded .title-screen__game-name {
+  opacity: 1;
+}
+
+.title-screen__game-caption {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+  line-height: 1.5;
+}
+
+.title-screen__game-label {
+  color: var(--color-muted);
+  font-size: var(--fs-small);
+}
+
+.title-screen__game-name {
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity var(--title-game-fade) ease;
+}
+
+/* 狭い画面では右側の画像の枠は出さず、同じ画像をキャッチコピーの後ろに薄く敷く。
+   画像の URL は js/main.js の initTitleGame が --title-game-image に入れる */
+@media (max-width: 959px) {
+  .title-screen__game {
+    display: none;
+  }
+
+  .title-screen__copy {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* 後ろの画像は文字の上下に 24px はみ出すので、その分ボタンとの間をあける */
+  .title-screen__copy.has-game-image {
+    margin-bottom: var(--space-6);
+  }
+
+  .title-screen__copy::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--space-5) * -1) calc(var(--space-3) * -1);
+    z-index: -1;
+    border-radius: 2px;
+    background: var(--title-game-image) center / cover no-repeat;
+    opacity: 0;
+    /* js/main.js の TITLE_GAME_FADE と合わせる */
+    transition: opacity 0.8s ease;
+  }
+
+  .title-screen__copy.has-game-image::before {
+    opacity: 0.3;
+  }
+}
+
 .title-screen__copy {
   margin: 0 0 var(--space-4);
   font-family: var(--font-heading);
@@ -908,6 +1003,7 @@ html:not(.js) .skill-bar__fill {
    マウスを乗せたときと、キーボードで選んだときに、少し外から寄ってきて囲む */
 .work-card::after,
 .game-card::after,
+.title-screen__game-link::after,
 .contact__link::after,
 .icon-button::after {
   content: "";
@@ -926,6 +1022,8 @@ html:not(.js) .skill-bar__fill {
 .work-card:has(.work-card__link:focus-visible)::after,
 .game-card:hover::after,
 .game-card:focus-visible::after,
+.title-screen__game-link:hover::after,
+.title-screen__game-link:focus-visible::after,
 .contact__link:hover::after,
 .contact__link:focus-visible::after,
 .icon-button:hover::after,

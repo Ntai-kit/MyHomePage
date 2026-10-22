@@ -168,6 +168,108 @@ function initSkillBars() {
   });
 }
 
+// data/steam-games.json（GitHub Actions が毎日 Steam から作る）を読む。
+// トップ画面とゲームの節の両方で使うので、読み込みは1回だけにする
+let steamGamesRequest;
+function loadSteamGames() {
+  steamGamesRequest ??= fetch('data/steam-games.json').then((response) => {
+    if (!response.ok) throw new Error(`status ${response.status}`);
+    return response.json();
+  });
+  return steamGamesRequest;
+}
+
+// ストアの横長の画像（460×215）。ストアが返した URL を使い、古い JSON で入っていないときは決まった形の URL を試す
+function steamHeaderImage(game) {
+  return game.headerImage
+    ?? `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
+}
+
+function steamStoreUrl(game) {
+  return `https://store.steampowered.com/app/${game.appid}/`;
+}
+
+// プレイしたゲームの画像を、トップ画面で10秒ごとに切り替えて出す。順番はシャッフルし、1周するまで同じゲームは出さない。
+// 広い画面では右側に画像と名前を出し、狭い画面ではキャッチコピーの後ろに画像を薄く敷く（css/base.css）
+const TITLE_GAME_INTERVAL = 10000;
+// フェードアウト・フェードインそれぞれの時間。css/base.css の --title-game-fade（0.8 秒）と合わせる
+const TITLE_GAME_FADE = 800;
+
+function initTitleGame() {
+  const figure = document.querySelector('.title-screen__game');
+  const copy = document.querySelector('.title-screen__copy');
+  if (!figure) return;
+  const link = figure.querySelector('.title-screen__game-link');
+  const image = figure.querySelector('.title-screen__game-image');
+  const name = figure.querySelector('.title-screen__game-name');
+
+  let order = [];
+  let index = -1;
+  let shown = false;
+
+  // マウスを乗せている間、キーボードで選んでいる間、タブが裏にある間は切り替えない
+  let hovered = false;
+  figure.addEventListener('pointerenter', () => { hovered = true; });
+  figure.addEventListener('pointerleave', () => { hovered = false; });
+  const isPaused = () => hovered || figure.contains(document.activeElement) || document.hidden;
+
+  function shuffle(items) {
+    const result = [...items];
+    for (let i = result.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
+  // 次の画像を先に読み込んでから、今の画像を消して入れ替える（読み込みの途中で空になる時間を作らない）
+  function showNext() {
+    if (!order.length) {
+      // 1本も読み込めなかったときは、場所ごと消して文字だけのトップ画面にする
+      if (!shown) figure.remove();
+      return;
+    }
+    index = (index + 1) % order.length;
+    const game = order[index];
+    const src = steamHeaderImage(game);
+
+    const preload = new Image();
+    preload.addEventListener('load', () => {
+      figure.classList.remove('is-loaded');
+      copy?.classList.remove('has-game-image');
+      setTimeout(() => {
+        link.href = steamStoreUrl(game);
+        name.textContent = game.name;
+        image.src = src;
+        copy?.style.setProperty('--title-game-image', `url("${src}")`);
+        figure.classList.add('is-loaded');
+        copy?.classList.add('has-game-image');
+        shown = true;
+      }, shown ? TITLE_GAME_FADE : 0);
+    }, { once: true });
+    // 読み込めない画像のゲームは順番から外して、次のゲームを試す
+    preload.addEventListener('error', () => {
+      order.splice(index, 1);
+      index -= 1;
+      showNext();
+    }, { once: true });
+    preload.src = src;
+  }
+
+  loadSteamGames()
+    .then((data) => {
+      order = shuffle((Array.isArray(data.games) ? data.games : []).filter((game) => game.headerImage));
+      showNext();
+
+      // 動きを減らす設定のときは、切り替えずに最初の1本だけを出す
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      setInterval(() => {
+        if (order.length > 1 && !isPaused()) showNext();
+      }, TITLE_GAME_INTERVAL);
+    })
+    .catch(() => figure.remove());
+}
+
 // プレイしたゲームの一覧。data/steam-games.json を読み、選んだ順に並べる
 function initSteamGames() {
   const list = document.getElementById('games-list');
@@ -192,14 +294,12 @@ function initSteamGames() {
   function createCard(game) {
     const link = document.createElement('a');
     link.className = 'game-card';
-    link.href = `https://store.steampowered.com/app/${game.appid}/`;
+    link.href = steamStoreUrl(game);
 
     // 名前は横に文字で出すので、画像は読み上げない
     const image = document.createElement('img');
     image.className = 'game-card__image';
-    // ストアが返した画像の URL を使う。古い JSON で入っていないときは、決まった形の URL を試す
-    image.src = game.headerImage
-      ?? `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
+    image.src = steamHeaderImage(game);
     image.alt = '';
     image.width = 460;
     image.height = 215;
@@ -282,11 +382,7 @@ function initSteamGames() {
     if (games.length) applyLimit();
   });
 
-  fetch('data/steam-games.json')
-    .then((response) => {
-      if (!response.ok) throw new Error(`status ${response.status}`);
-      return response.json();
-    })
+  loadSteamGames()
     .then((data) => {
       games = Array.isArray(data.games) ? data.games : [];
       if (!games.length) {
@@ -348,5 +444,6 @@ function initContactForm() {
 initNavToggle();
 initNavCursor();
 initSkillBars();
+initTitleGame();
 initSteamGames();
 initContactForm();
