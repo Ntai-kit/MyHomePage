@@ -13,7 +13,10 @@
        中身はここで管理し、meta では効かない frame-ancestors だけを Cloudflare のヘッダーで足す（両方あると、両方を満たすものだけが通る）。
        読み込む先を増やしたら、ここにも足す -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://shared.akamai.steamstatic.com; connect-src 'self' https://formspree.io https://cloudflareinsights.com; form-action https://formspree.io; base-uri 'none'; object-src 'none'">
-  <link rel="icon" href="images/avatar.svg" type="image/svg+xml">
+  <!-- タブのアイコン。プロフィールの写真の頭の部分を切り取ったもの（小さいと全身では何か分からないため）。
+       apple-touch-icon は、iPhone などでホーム画面に置いたときのアイコン -->
+  <link rel="icon" href="images/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- トップ画面とゲームの節の画像の配信元。画像は CORS なしで読むので crossorigin は付けない -->
@@ -106,8 +109,8 @@
     <section class="section section--hero" id="profile">
       <div class="container hero">
         <div class="hero__photo">
-          <!-- 書き換える: 自分の写真を images/ に入れて src を変える -->
-          <img src="images/avatar.svg" alt="Ntai のアイコン" width="180" height="180" loading="lazy">
+          <!-- 自分の写真。元の写真を正方形に切り取り、480px の JPEG にしたもの（高精細の画面でも 180px の表示がぼやけない大きさ） -->
+          <img src="images/profile.jpg" alt="Ntai のアイコン" width="180" height="180" loading="lazy">
         </div>
         <div class="hero__text">
           <p class="hero__hello">はじめまして</p>
