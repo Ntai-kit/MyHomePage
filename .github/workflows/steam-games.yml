@@ -1,0 +1,46 @@
+# Steam から遊んだゲームの一覧を毎日取り、data/steam-games.json が変わっていればコミットする
+name: Steam のゲーム一覧を更新
+
+on:
+  schedule:
+    # 毎日 日本時間の 4:00（UTC の 19:00）
+    - cron: '0 19 * * *'
+  # Actions の画面から手で動かせるようにする
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Steam から一覧を取る
+        run: node scripts/fetch-steam-games.mjs
+        env:
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+          STEAM_ID: '76561199681275619'
+
+      - name: 変わっていればコミットする
+        run: |
+          # 取った日時は毎回変わるので、ゲームの中身が変わったときだけコミットする
+          if git diff --quiet -- data/steam-games.json; then
+            echo '変更なし'
+            exit 0
+          fi
+          if git show HEAD:data/steam-games.json > /tmp/before.json 2>/dev/null \
+            && [ "$(jq -c .games /tmp/before.json)" = "$(jq -c .games data/steam-games.json)" ]; then
+            echo 'ゲームの中身は変わっていない'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/steam-games.json
+          git commit -m 'Steam のゲーム一覧を更新'
+          git push

@@ -11,6 +11,11 @@
   --color-accent-2: #cc3366;
   --color-border: #dddddd;
   --color-on-accent: #ffffff;
+  /* 最初の画面のアイコンのボタン */
+  --color-button-from: #3366cc;
+  --color-button-to: #2855aa;
+  --color-button-pressed: #1f4488;
+  --color-on-button: #ffffff;
   /* 作品カードにマウスを乗せたときの、背景と文字を入れ替えた色 */
   --color-invert-bg: #222222;
   --color-invert-pressed: #444444;
@@ -33,6 +38,7 @@
   /* 文字の大きさはこの段階から選ぶ。ドット文字（--font-heading）は 16px の方眼で作られているので、
      ドットの角がくっきり出る 16px の倍数（1rem / 2rem / 3rem / 4rem）だけで使う */
   --fs-display: 3rem;
+  --fs-title: 2rem;
   --fs-h2: 2rem;
   --fs-logo: 2rem;
   --fs-h3: 1.125rem;
@@ -41,23 +47,31 @@
   /* 押せる部品の最小の高さ（HIG の既定 44pt） */
   --hit-min: 44px;
   --focus-ring: 2px solid var(--color-accent);
-  /* 選んでいる部品を囲むカギ形の枠（ゲームのカーソル風）。四隅の線は背景の線を8本重ねて描く */
+  /* 選んでいる部品を囲むカギ形の枠（ゲームのカーソル風）。四隅の線は背景の線を8本重ねて描く。
+     線の色は、使う部品の color で決める */
   --cursor-corner: 10px;
   --cursor-line: 2px;
   --cursor-brackets:
-    linear-gradient(var(--color-accent) 0 0) top left / var(--cursor-corner) var(--cursor-line) no-repeat,
-    linear-gradient(var(--color-accent) 0 0) top left / var(--cursor-line) var(--cursor-corner) no-repeat,
-    linear-gradient(var(--color-accent) 0 0) top right / var(--cursor-corner) var(--cursor-line) no-repeat,
-    linear-gradient(var(--color-accent) 0 0) top right / var(--cursor-line) var(--cursor-corner) no-repeat,
-    linear-gradient(var(--color-accent) 0 0) bottom left / var(--cursor-corner) var(--cursor-line) no-repeat,
-    linear-gradient(var(--color-accent) 0 0) bottom left / var(--cursor-line) var(--cursor-corner) no-repeat,
-    linear-gradient(var(--color-accent) 0 0) bottom right / var(--cursor-corner) var(--cursor-line) no-repeat,
-    linear-gradient(var(--color-accent) 0 0) bottom right / var(--cursor-line) var(--cursor-corner) no-repeat;
+    linear-gradient(currentColor 0 0) top left / var(--cursor-corner) var(--cursor-line) no-repeat,
+    linear-gradient(currentColor 0 0) top left / var(--cursor-line) var(--cursor-corner) no-repeat,
+    linear-gradient(currentColor 0 0) top right / var(--cursor-corner) var(--cursor-line) no-repeat,
+    linear-gradient(currentColor 0 0) top right / var(--cursor-line) var(--cursor-corner) no-repeat,
+    linear-gradient(currentColor 0 0) bottom left / var(--cursor-corner) var(--cursor-line) no-repeat,
+    linear-gradient(currentColor 0 0) bottom left / var(--cursor-line) var(--cursor-corner) no-repeat,
+    linear-gradient(currentColor 0 0) bottom right / var(--cursor-corner) var(--cursor-line) no-repeat,
+    linear-gradient(currentColor 0 0) bottom right / var(--cursor-line) var(--cursor-corner) no-repeat;
 }
 
 @media (min-width: 600px) {
   :root {
     --fs-display: 4rem;
+    --fs-title: 3rem;
+  }
+}
+
+@media (min-width: 960px) {
+  :root {
+    --fs-title: 4rem;
   }
 }
 
@@ -98,6 +112,14 @@ a {
   text-underline-offset: 0.2em;
 }
 
+/* スマートフォンで押したとき、ダブルタップの拡大を待たずにすぐ反応させる */
+a,
+button,
+input,
+textarea {
+  touch-action: manipulation;
+}
+
 /* キーボードで移動したときに、今いる場所がはっきり分かるようにする */
 a:focus-visible,
 button:focus-visible {
@@ -110,11 +132,14 @@ h2,
 h3 {
   font-family: var(--font-heading);
   line-height: 1.3;
+  /* 行末に1〜2文字だけ残らないよう、行の長さをそろえて折り返す */
+  text-wrap: balance;
 }
 
 /* ドット文字は、文字の間隔を足すとドットの位置が半端になり、太字にすると無理に太らせた形になってにじむ。
    どちらも付けない（この書体には普通の太さしかない） */
 .site-logo,
+.title-screen__copy,
 .hero__name,
 .section__title,
 .status-card {
@@ -131,11 +156,13 @@ h3 {
   padding-right: max(var(--gutter), env(safe-area-inset-right));
 }
 
-/* 押したときの見た目。動きを減らす設定のときは縮めない */
+/* 押したときの見た目。動きを減らす設定のときは縮めない。
+   押したときの色は :active で付けるので、ブラウザが重ねる灰色の四角は出さない */
 .nav-toggle,
 .site-nav__list a,
 .contact__link {
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nav-toggle:active,
@@ -211,6 +238,10 @@ h3 {
   cursor: pointer;
 }
 
+.nav-toggle:hover {
+  border-color: var(--color-accent);
+}
+
 .nav-toggle:active {
   background: var(--color-pressed);
 }
@@ -223,7 +254,7 @@ h3 {
 }
 
 /* 今見ている節のメニュー項目。色でも示すので、枠が出ない幅でも分かる */
-.site-nav__list a[aria-current="true"] {
+.site-nav__list a[aria-current="location"] {
   color: var(--color-accent);
 }
 
@@ -236,16 +267,39 @@ h3 {
   position: absolute;
   top: 0;
   left: 0;
-  width: 0;
-  height: 0;
   pointer-events: none;
   opacity: 0;
-  background: var(--cursor-brackets);
+}
+
+/* 枠の四隅を別々の部品にし、transform だけで動かす（幅や高さを動かすとレイアウトの計算が毎回起きる）。
+   位置は js/main.js の initNavCursor が決める */
+.nav-cursor__corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--cursor-corner);
+  height: var(--cursor-corner);
+  background:
+    linear-gradient(var(--color-accent) 0 0) var(--corner-at) / 100% var(--cursor-line) no-repeat,
+    linear-gradient(var(--color-accent) 0 0) var(--corner-at) / var(--cursor-line) 100% no-repeat;
+}
+
+.nav-cursor__corner--tl { --corner-at: top left; }
+.nav-cursor__corner--tr { --corner-at: top right; }
+.nav-cursor__corner--bl { --corner-at: bottom left; }
+.nav-cursor__corner--br { --corner-at: bottom right; }
+
+/* 最初の画面にいる間は、どの節も選んでいないので枠を消す */
+.nav-cursor.is-ready.is-hidden {
+  opacity: 0;
 }
 
 .nav-cursor.is-ready {
   opacity: 1;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.nav-cursor.is-ready .nav-cursor__corner {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @media (max-width: 767px) {
@@ -270,6 +324,8 @@ h3 {
     max-height: calc(100vh - var(--header-height));
     max-height: calc(100dvh - var(--header-height));
     overflow-y: auto;
+    /* メニューの端まで来ても、後ろのページはスクロールさせない */
+    overscroll-behavior: contain;
   }
 
   .site-nav__list {
@@ -305,6 +361,131 @@ h3 {
   font-family: var(--font-body);
   font-size: var(--fs-h3);
   font-weight: 700;
+}
+
+/* 最初の画面（ゲームのタイトル画面風）。ヘッダーを除いた画面の高さいっぱいに広げる */
+
+.title-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height));
+  min-height: calc(100svh - var(--header-height));
+  /* 下にはスクロールの案内を置くので、その分をあける */
+  padding: var(--space-7) 0 calc(var(--space-7) + var(--hit-min) + var(--space-5));
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title-screen__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: center;
+}
+
+.title-screen__copy {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-heading);
+  font-size: var(--fs-title);
+  line-height: 1.25;
+}
+
+.title-screen__lead {
+  margin: 0 0 var(--space-5);
+  font-size: var(--fs-h3);
+}
+
+.title-screen__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* アイコンだけのボタン。何のボタンかは aria-label で読み上げる */
+.icon-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--color-button-from) 5%, var(--color-button-to) 95%);
+  color: var(--color-on-button);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease;
+}
+
+/* キーボードで選んだときは、連絡先のボタンと同じカギ形の枠で示す */
+.icon-button:focus-visible {
+  outline: none;
+}
+
+.icon-button:active {
+  background: var(--color-button-pressed);
+  transform: scale(0.97);
+}
+
+.icon-button__icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+/* 公式ロゴは縦横の比が正方形ではないので、32px の枠に縦横比を保って収める */
+.icon-button__icon--logo {
+  object-fit: contain;
+}
+
+/* スマートフォンの幅では、上の余白を詰める */
+@media (max-width: 599px) {
+  .title-screen {
+    padding-top: var(--space-6);
+  }
+}
+
+.title-screen__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-4);
+  transform: translateX(-50%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: var(--hit-min);
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-muted);
+  font-size: var(--fs-small);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.title-screen__scroll:hover {
+  color: var(--color-accent);
+}
+
+/* ▼ はゲームの「つづきを読む」の印のように、2つの位置をカクッと行き来させる */
+.title-screen__arrow {
+  color: var(--color-accent);
+  animation: title-arrow 1.2s steps(1, end) infinite;
+}
+
+@keyframes title-arrow {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(4px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 /* プロフィール */
@@ -350,13 +531,8 @@ h3 {
 }
 
 .hero__name {
-  margin: 0 0 var(--space-2);
-  font-size: var(--fs-display);
-}
-
-.hero__lead {
   margin: 0;
-  font-size: var(--fs-h3);
+  font-size: var(--fs-display);
 }
 
 .status-card {
@@ -486,7 +662,7 @@ h3 {
   display: block;
   height: 100%;
   width: calc(var(--level, 0) * 1%);
-  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-2));
+  background: var(--color-accent);
 }
 
 /* JavaScript が動かないときは data-level の値を CSS では読めないので、バーを満たして見せる */
@@ -549,6 +725,117 @@ html:not(.js) .skill-bar__fill {
 
 /* 作品 */
 
+/* プレイしたゲーム */
+
+.games__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.games__summary {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--fs-small);
+}
+
+.games__sort {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-weight: 700;
+}
+
+/* Windows のダークモードでも読めるよう、背景と文字の色をはっきり決める */
+.games__select {
+  min-height: var(--hit-min);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.games__select:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* カード全体が Steam のストアページへのリンク */
+.game-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.game-card:focus-visible {
+  outline: none;
+}
+
+/* 作品カードと同じく、マウスを乗せたときとキーボードで選んだときに背景と文字の色を入れ替える */
+.game-card:is(:hover, :focus-visible) {
+  background-color: var(--color-invert-bg);
+  color: var(--color-invert-text);
+}
+
+.game-card:is(:hover, :focus-visible) .game-card__meta {
+  color: var(--color-invert-muted);
+}
+
+/* Steam のストアの横長の画像（460×215） */
+.game-card__image {
+  width: 100%;
+  aspect-ratio: 460 / 215;
+  object-fit: cover;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--color-pressed);
+}
+
+.game-card__body {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+
+.game-card__name {
+  margin: 0;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.game-card__meta {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
 .works {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
@@ -599,22 +886,36 @@ html:not(.js) .skill-bar__fill {
 /* 押せる部品は、メニューと同じカギ形の枠で「選んでいる」ことを示す。
    マウスを乗せたときと、キーボードで選んだときに、少し外から寄ってきて囲む */
 .work-card::after,
-.contact__link::after {
+.game-card::after,
+.contact__link::after,
+.icon-button::after {
   content: "";
   position: absolute;
-  inset: -10px;
+  inset: -6px;
   pointer-events: none;
   opacity: 0;
+  color: var(--color-accent);
   background: var(--cursor-brackets);
-  transition: opacity 0.15s ease, inset 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* 寄ってくる動きは inset ではなく拡大率で付ける（inset を動かすとレイアウトの計算が毎回起きる） */
+  transform: scale(1.04);
+  transition: opacity 0.15s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .work-card:hover::after,
 .work-card:has(.work-card__link:focus-visible)::after,
+.game-card:hover::after,
+.game-card:focus-visible::after,
 .contact__link:hover::after,
-.contact__link:focus-visible::after {
+.contact__link:focus-visible::after,
+.icon-button:hover::after,
+.icon-button:focus-visible::after {
   opacity: 1;
-  inset: -6px;
+  transform: none;
+}
+
+/* 緑のボタンでは、枠もボタンと同じ緑にする */
+.icon-button::after {
+  color: var(--color-button-from);
 }
 
 /* 長い見出しでも読みやすいように、本文と同じ書体の太字にする */
@@ -709,6 +1010,97 @@ html:not(.js) .skill-bar__fill {
   color: var(--color-on-accent);
 }
 
+/* お問い合わせフォーム */
+
+.contact-form__title {
+  margin-top: var(--space-7);
+}
+
+.contact-form {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 640px;
+}
+
+.contact-form__field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.contact-form__field label {
+  font-weight: 700;
+}
+
+/* iPhone で入力欄を選んだときに画面が拡大されないよう、文字は 16px 以上にする */
+.contact-form__input {
+  width: 100%;
+  min-height: var(--hit-min);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--fs-body);
+}
+
+textarea.contact-form__input {
+  resize: vertical;
+}
+
+.contact-form__input:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+/* スパム対策の欄は、画面にも読み上げにも出さない */
+.contact-form__trap {
+  position: absolute;
+  left: -9999px;
+}
+
+/* 送信ボタンは .contact__link の縁の太さと余白を使い、形と色はここで決める */
+.contact-form__submit {
+  justify-self: start;
+  /* 角を丸めず、緑のアイコンのボタンと同じ長方形にする */
+  border-radius: 2px;
+  background: none;
+  color: var(--color-accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+/* 作品カードと同じく、マウスを乗せたときとキーボードで選んだときに、0.2 秒かけて色を入れ替える。
+   背景は文字と縁の水色に、文字と縁はページの背景色にする */
+.contact-form__submit:is(:hover, :focus-visible) {
+  background-color: var(--color-accent);
+  border-color: var(--color-bg);
+  color: var(--color-bg);
+}
+
+/* 押している間は、反転した背景を一段暗くする（連絡先のボタンの押したときの色より優先させる） */
+.contact-form__submit:is(:hover, :focus-visible):active {
+  background-color: var(--color-accent-pressed);
+  border-color: var(--color-bg);
+  color: var(--color-bg);
+}
+
+.contact-form__submit[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.contact-form__status {
+  margin: 0;
+}
+
+.contact-form__status:empty {
+  display: none;
+}
+
 /* フッター */
 
 .site-footer {
@@ -737,7 +1129,8 @@ html:not(.js) .skill-bar__fill {
 
   .nav-toggle:active,
   .site-nav__list a:active,
-  .contact__link:active {
+  .contact__link:active,
+  .icon-button:active {
     transform: none;
   }
 }

@@ -11,6 +11,11 @@
   --color-accent-2: #b57cff;
   --color-border: #34506e;
   --color-on-accent: #171a21;
+  /* 最初の画面のアイコンのボタン（Steam の購入ボタンと同じ緑。白いアイコンを載せる） */
+  --color-button-from: #75b022;
+  --color-button-to: #588a1b;
+  --color-button-pressed: #4c7a17;
+  --color-on-button: #ffffff;
   /* 作品カードを反転したときの色（本文の色を背景に、ページの背景色を文字にする） */
   --color-invert-bg: #e6edf5;
   --color-invert-pressed: #c3d0de;
