@@ -10,6 +10,8 @@
   <link rel="icon" href="images/avatar.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- トップ画面とゲームの節の画像の配信元。画像は CORS なしで読むので crossorigin は付けない -->
+  <link rel="preconnect" href="https://shared.akamai.steamstatic.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+JP:wght@400;700&display=swap">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/theme.css">
@@ -73,7 +75,8 @@
         </div>
         <!-- プレイしたゲームから1本をランダムに出す。中身は js/main.js の initTitleGame が入れる -->
         <figure class="title-screen__game">
-          <a class="title-screen__game-link" href="#games">
+          <!-- 中の画像は alt="" なので、リンクの名前は aria-label で付ける（ゲームを出したら js/main.js がゲーム名に書き換える） -->
+          <a class="title-screen__game-link" href="#games" aria-label="プレイしたゲーム">
             <img class="title-screen__game-image" alt="" width="460" height="215" fetchpriority="high">
           </a>
           <figcaption class="title-screen__game-caption">

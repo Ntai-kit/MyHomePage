@@ -239,6 +239,7 @@ function initTitleGame() {
       copy?.classList.remove('has-game-image');
       setTimeout(() => {
         link.href = steamStoreUrl(game);
+        link.setAttribute('aria-label', `${game.name}（Steam のストアページ）`);
         name.textContent = game.name;
         image.src = src;
         copy?.style.setProperty('--title-game-image', `url("${src}")`);
