@@ -17,9 +17,10 @@ jobs:
     steps:
       # 作者がタグを付け替えても知らないコードが動かないよう、コミットの SHA で固定する（書き込みの権限があるため）。
       # 上げるときは、新しいタグの SHA を git ls-remote --tags https://github.com/actions/checkout などで調べる
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      # v5 から Actions 自身が Node 24 で動く（v4 は Node 20 向けで、サポート切れの警告が出ていた）
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           # その時点でサポート中の LTS の、いちばん新しい版を使う（24 から 26 のような大きな版の切り替えも自動）。
           # 実行環境に置いてある少し古い版ではなく、毎回最新を取ってくる。
