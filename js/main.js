@@ -54,7 +54,7 @@ function initNavCursor() {
   function findCurrentIndex() {
     if (chosenIndex >= 0) return chosenIndex;
 
-    // ページの最後まで来たら、最後の節（お問い合わせの節は短く、上端が基準の線まで届かないため）
+    // ページの最後まで来たら、最後の節（各種サイトの節は短く、上端が基準の線まで届かないため）
     const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
     if (atBottom) return items.length - 1;
 
