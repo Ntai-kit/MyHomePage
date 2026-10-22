@@ -247,6 +247,9 @@ function initTitleGame() {
       copy?.classList.remove('has-game-image');
       setTimeout(() => {
         link.href = steamStoreUrl(game);
+        // ストアページは外のサイトなので、新しいタブで開く（最初の #games へのリンクは同じタブのまま）
+        link.target = '_blank';
+        link.rel = 'noopener';
         link.setAttribute('aria-label', `${game.name}（Steam のストアページ）`);
         name.textContent = game.name;
         image.src = src;
@@ -406,6 +409,9 @@ function initSteamGames() {
     const link = document.createElement('a');
     link.className = 'game-card';
     link.href = steamStoreUrl(game);
+    // 外のサイト（Steam のストア）へのリンクは、新しいタブで開く
+    link.target = '_blank';
+    link.rel = 'noopener';
 
     // 名前は横に文字で出すので、画像は読み上げない
     const image = document.createElement('img');
