@@ -1,4 +1,243 @@
 {
-  "updatedAt": null,
-  "games": []
+  "updatedAt": "2026-10-22T08:23:15.246Z",
+  "games": [
+    {
+      "appid": 2357570,
+      "name": "Overwatch®",
+      "playtimeForever": 6056,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1789731915
+    },
+    {
+      "appid": 3678970,
+      "name": "TBH: Task Bar Hero",
+      "playtimeForever": 4071,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1786704066
+    },
+    {
+      "appid": 714010,
+      "name": "Aimlabs",
+      "playtimeForever": 3903,
+      "playtime2Weeks": 488,
+      "lastPlayed": 1792420676
+    },
+    {
+      "appid": 2427700,
+      "name": "Backpack Battles",
+      "playtimeForever": 2589,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1773679429
+    },
+    {
+      "appid": 2868840,
+      "name": "Slay the Spire 2",
+      "playtimeForever": 2307,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1786776213
+    },
+    {
+      "appid": 1172470,
+      "name": "Apex Legends",
+      "playtimeForever": 2088,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1789743313
+    },
+    {
+      "appid": 3314790,
+      "name": "CloverPit",
+      "playtimeForever": 2056,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1785507121
+    },
+    {
+      "appid": 1407200,
+      "name": "World of Tanks",
+      "playtimeForever": 2001,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1722608434
+    },
+    {
+      "appid": 381210,
+      "name": "Dead by Daylight",
+      "playtimeForever": 1687,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1790601194
+    },
+    {
+      "appid": 568220,
+      "name": "Lobotomy Corporation",
+      "playtimeForever": 1007,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1779376722
+    },
+    {
+      "appid": 1973530,
+      "name": "Limbus Company",
+      "playtimeForever": 952,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1773144077
+    },
+    {
+      "appid": 394360,
+      "name": "Hearts of Iron IV",
+      "playtimeForever": 935,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1783421669
+    },
+    {
+      "appid": 2656490,
+      "name": "ANTHEM#9",
+      "playtimeForever": 676,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1772713144
+    },
+    {
+      "appid": 3606890,
+      "name": "Upload Labs",
+      "playtimeForever": 643,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1766321093
+    },
+    {
+      "appid": 1092790,
+      "name": "Inscryption",
+      "playtimeForever": 609,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1789128971
+    },
+    {
+      "appid": 2124120,
+      "name": "SULFUR",
+      "playtimeForever": 582,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1788699202
+    },
+    {
+      "appid": 3564400,
+      "name": "ウマ娘 プリティーダービー",
+      "playtimeForever": 569,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1779431412
+    },
+    {
+      "appid": 2584990,
+      "name": "Shadowverse: Worlds Beyond",
+      "playtimeForever": 497,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1751382270
+    },
+    {
+      "appid": 974480,
+      "name": "Echoes of Mystralia",
+      "playtimeForever": 369,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1788519610
+    },
+    {
+      "appid": 4083770,
+      "name": "Nakara",
+      "playtimeForever": 334,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1786972065
+    },
+    {
+      "appid": 606150,
+      "name": "Moonlighter",
+      "playtimeForever": 328,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1786774394
+    },
+    {
+      "appid": 2881370,
+      "name": "Thank You For Your Application",
+      "playtimeForever": 287,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1787499225
+    },
+    {
+      "appid": 1931770,
+      "name": "Chants of Sennaar",
+      "playtimeForever": 276,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1784738773
+    },
+    {
+      "appid": 289070,
+      "name": "Sid Meier's Civilization VI",
+      "playtimeForever": 260,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1788942105
+    },
+    {
+      "appid": 2379780,
+      "name": "Balatro",
+      "playtimeForever": 247,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1772597577
+    },
+    {
+      "appid": 1049590,
+      "name": "Eternal Return",
+      "playtimeForever": 223,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1716020796
+    },
+    {
+      "appid": 1534980,
+      "name": "Terminus: Zombie Survivors",
+      "playtimeForever": 188,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1788678690
+    },
+    {
+      "appid": 2709090,
+      "name": "Cycle of Corruption",
+      "playtimeForever": 172,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1778776258
+    },
+    {
+      "appid": 3711590,
+      "name": "Train45",
+      "playtimeForever": 168,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1782664256
+    },
+    {
+      "appid": 3241660,
+      "name": "R.E.P.O.",
+      "playtimeForever": 167,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1770910038
+    },
+    {
+      "appid": 238960,
+      "name": "Path of Exile",
+      "playtimeForever": 158,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1785969641
+    },
+    {
+      "appid": 2835570,
+      "name": "Buckshot Roulette",
+      "playtimeForever": 148,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1760800528
+    },
+    {
+      "appid": 1865060,
+      "name": "14 Minesweeper Variants",
+      "playtimeForever": 134,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1784976408
+    },
+    {
+      "appid": 5044770,
+      "name": "The Death Game Report",
+      "playtimeForever": 125,
+      "playtime2Weeks": 0,
+      "lastPlayed": 1788541609
+    }
+  ]
 }
