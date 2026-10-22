@@ -570,6 +570,13 @@ h3 {
   object-fit: contain;
 }
 
+/* note のアイコンは、正方形の中に余白を取って「n」が描かれているので、ボタンいっぱいに広げて
+   ほかのロゴと同じくらいの大きさに見せる */
+.icon-button__icon--fill {
+  width: 100%;
+  height: 100%;
+}
+
 /* スマートフォンの幅では、上の余白を詰める */
 @media (max-width: 599px) {
   .title-screen {
