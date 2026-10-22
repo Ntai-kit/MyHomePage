@@ -844,6 +844,9 @@ html:not(.js) .skill-bar__fill {
   max-height: min(70vh, 640px);
   margin: calc(var(--space-2) * -1);
   padding: var(--space-2);
+  /* 縦だけにスクロールする。カギ形の枠は、寄ってくる前（1.04 倍で透明）のときに余白より外へ出るので、
+     横は切り落として、横のスクロールバーを出さない */
+  overflow-x: hidden;
   overflow-y: auto;
   scrollbar-gutter: stable;
 }
