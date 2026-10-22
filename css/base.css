@@ -1248,6 +1248,24 @@ textarea.contact-form__input {
   margin: 0;
 }
 
+/* 出典と商標の表記。.site-footer p の margin に負けないよう、親を付けて指定する */
+.site-footer .site-footer__notice {
+  margin-bottom: var(--space-2);
+  line-height: 1.6;
+  /* 中央ぞろえの短い行で語の途中が折り返さないよう、文節で折り返し、行の長さをそろえる */
+  word-break: auto-phrase;
+  text-wrap: balance;
+}
+
+/* 表記のあとの著作権の行は、少し離す */
+.site-footer .site-footer__notice + p:not(.site-footer__notice) {
+  margin-top: var(--space-4);
+}
+
+.site-footer__notice a {
+  color: inherit;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
