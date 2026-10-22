@@ -836,6 +836,12 @@ html:not(.js) .skill-bar__fill {
   transition: color 0.2s ease;
 }
 
+/* 2行目からは「もっとみる」で出す。ボタンはカードの下の真ん中に置く */
+.games__more-wrap {
+  margin-top: var(--space-5);
+  text-align: center;
+}
+
 .works {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
@@ -1060,9 +1066,9 @@ textarea.contact-form__input {
   left: -9999px;
 }
 
-/* 送信ボタンは .contact__link の縁の太さと余白を使い、形と色はここで決める */
-.contact-form__submit {
-  justify-self: start;
+/* 文字のボタン（送信、もっとみる）は .contact__link の縁の太さと余白を使い、形と色はここで決める */
+.contact-form__submit,
+.games__more {
   /* 角を丸めず、緑のアイコンのボタンと同じ長方形にする */
   border-radius: 2px;
   background: none;
@@ -1075,17 +1081,23 @@ textarea.contact-form__input {
 
 /* 作品カードと同じく、マウスを乗せたときとキーボードで選んだときに、0.2 秒かけて色を入れ替える。
    背景は文字と縁の水色に、文字と縁はページの背景色にする */
-.contact-form__submit:is(:hover, :focus-visible) {
+.contact-form__submit:is(:hover, :focus-visible),
+.games__more:is(:hover, :focus-visible) {
   background-color: var(--color-accent);
   border-color: var(--color-bg);
   color: var(--color-bg);
 }
 
 /* 押している間は、反転した背景を一段暗くする（連絡先のボタンの押したときの色より優先させる） */
-.contact-form__submit:is(:hover, :focus-visible):active {
+.contact-form__submit:is(:hover, :focus-visible):active,
+.games__more:is(:hover, :focus-visible):active {
   background-color: var(--color-accent-pressed);
   border-color: var(--color-bg);
   color: var(--color-bg);
+}
+
+.contact-form__submit {
+  justify-self: start;
 }
 
 .contact-form__submit[aria-disabled="true"] {

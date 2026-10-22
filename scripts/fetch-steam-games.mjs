@@ -10,6 +10,14 @@ const OUTPUT = new URL('../data/steam-games.json', import.meta.url);
 // ページに出すのは、合計で2時間（120分）以上遊んだゲームだけ
 const MIN_PLAYTIME_MINUTES = 120;
 
+// 成人向けのゲームは出さない。Steam が付ける区分の 3（成人向けの性的内容）と
+// 4（頻繁なヌードや性的内容）、ユーザーが付けるタグの「変態」（Hentai）のどれかがあれば除く。
+// 「性的表現」「ヌード」のタグは一般向けの大作にも付くので、判定に使わない
+const ADULT_CONTENT_DESCRIPTORS = new Set([3, 4]);
+const ADULT_TAGS = new Set([9130]);
+// ストアの情報は、まとめて何本ずつ問い合わせるか
+const STORE_BATCH_SIZE = 50;
+
 const key = process.env.STEAM_API_KEY;
 const steamId = process.env.STEAM_ID;
 if (!key || !steamId) {
@@ -40,8 +48,43 @@ if (!body?.games) {
   process.exit(1);
 }
 
-const games = body.games
-  .filter((game) => game.playtime_forever >= MIN_PLAYTIME_MINUTES)
+const played = body.games.filter((game) => game.playtime_forever >= MIN_PLAYTIME_MINUTES);
+
+// ストアから、各ゲームの区分とタグを取る（この API はキーが要らない）
+async function fetchStoreItems(appids) {
+  const input = {
+    ids: appids.map((appid) => ({ appid })),
+    context: { language: 'japanese', country_code: 'JP' },
+    data_request: { include_tag_count: 20 },
+  };
+  const storeUrl = new URL('https://api.steampowered.com/IStoreBrowseService/GetItems/v1/');
+  storeUrl.searchParams.set('input_json', JSON.stringify(input));
+  const storeResponse = await fetch(storeUrl);
+  if (!storeResponse.ok) {
+    // 判定できないまま一覧を出さないよう、ここで止める
+    console.error(`Steam のストアの API がエラーを返しました（status ${storeResponse.status}）`);
+    process.exit(1);
+  }
+  const { response: storeBody } = await storeResponse.json();
+  return storeBody?.store_items ?? [];
+}
+
+const adultAppids = new Set();
+for (let i = 0; i < played.length; i += STORE_BATCH_SIZE) {
+  const items = await fetchStoreItems(played.slice(i, i + STORE_BATCH_SIZE).map((game) => game.appid));
+  for (const item of items) {
+    const descriptors = item.content_descriptorids ?? [];
+    const tags = (item.tags ?? []).map((tag) => tag.tagid);
+    if (descriptors.some((id) => ADULT_CONTENT_DESCRIPTORS.has(id)) || tags.some((id) => ADULT_TAGS.has(id))) {
+      adultAppids.add(item.appid);
+    }
+  }
+}
+// 名前はログに出さず、本数だけ出す（Actions のログは公開リポジトリだと誰でも見られる）
+console.log(`成人向けのゲーム ${adultAppids.size} 本を除きました`);
+
+const games = played
+  .filter((game) => !adultAppids.has(game.appid))
   .map((game) => ({
     appid: game.appid,
     name: game.name,

@@ -177,7 +177,8 @@ function initSteamGames() {
 
   const hours = new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 1 });
   const date = new Intl.DateTimeFormat('ja-JP', { dateStyle: 'medium' });
-  const collator = new Intl.Collator('ja');
+  // 名前の中の数字は数として比べる（「2」を「10」より前にする）
+  const collator = new Intl.Collator('ja', { numeric: true });
 
   // 並べ替えの順。同じ値のときはプレイ時間の長い順にする
   const byPlaytime = (a, b) => b.playtimeForever - a.playtimeForever;
@@ -231,14 +232,44 @@ function initSteamGames() {
     return item;
   }
 
+  const moreWrap = document.querySelector('.games__more-wrap');
+  const moreButton = moreWrap?.querySelector('.games__more');
+
   let games = [];
+  let expanded = false;
+
+  // 閉じている間は1行目のカードだけを出す。1行に並ぶ数は画面の幅で変わるので、グリッドの列の数を数える
+  function applyLimit() {
+    const columns = getComputedStyle(list).gridTemplateColumns.split(' ').length;
+    const items = [...list.children];
+    items.forEach((item, i) => {
+      item.hidden = !expanded && i >= columns;
+    });
+
+    const rest = items.length - columns;
+    if (!moreWrap || !moreButton) return;
+    moreWrap.hidden = rest <= 0;
+    moreButton.setAttribute('aria-expanded', String(expanded));
+    moreButton.textContent = expanded ? '閉じる' : `もっとみる（残り ${rest} 本）`;
+  }
 
   function render() {
     const sorted = [...games].sort(compare[select.value] ?? byPlaytime);
     list.replaceChildren(...sorted.map(createCard));
+    applyLimit();
   }
 
   select.addEventListener('change', render);
+
+  moreButton?.addEventListener('click', () => {
+    expanded = !expanded;
+    applyLimit();
+  });
+
+  // 画面の幅が変わると1行に並ぶ数も変わるので、出すカードを選び直す
+  window.addEventListener('resize', () => {
+    if (games.length) applyLimit();
+  });
 
   fetch('data/steam-games.json')
     .then((response) => {
