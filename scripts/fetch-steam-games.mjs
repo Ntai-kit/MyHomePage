@@ -90,6 +90,11 @@ for (let i = 0; i < played.length; i += STORE_BATCH_SIZE) {
 // 名前はログに出さず、本数だけ出す（Actions のログは公開リポジトリだと誰でも見られる）
 console.log(`成人向けのゲーム ${adultAppids.size} 本を除きました`);
 
+// 最終プレイは、日本時間の日付（2026-10-22 の形）までに丸める。
+// JSON は誰でも見られるので、時刻まで載せると何時ごろ遊んでいるかが分かってしまう
+const jstDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Tokyo' });
+const toPlayedDate = (seconds) => (seconds > 0 ? jstDate.format(seconds * 1000) : null);
+
 const games = played
   .filter((game) => !adultAppids.has(game.appid))
   .map((game) => ({
@@ -98,8 +103,8 @@ const games = played
     // 分単位
     playtimeForever: game.playtime_forever,
     playtime2Weeks: game.playtime_2weeks ?? 0,
-    // UNIX 時間（秒）。記録がないゲームは 0
-    lastPlayed: game.rtime_last_played ?? 0,
+    // 日本時間の日付。記録がないゲームは null
+    lastPlayedDate: toPlayedDate(game.rtime_last_played ?? 0),
     // ストアから取れなかったときは null（ページが決まった形の URL を試す）
     headerImage: headerImages.get(game.appid) ?? null,
   }))

@@ -387,6 +387,8 @@ function initSteamGames() {
 
   const hours = new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 1 });
   const date = new Intl.DateTimeFormat('ja-JP', { dateStyle: 'medium' });
+  // 最終プレイは日本時間の日付（2026-10-22 の形）で届く。見る人の時差で日付がずれないよう、UTC の 0 時として出す
+  const playedDate = new Intl.DateTimeFormat('ja-JP', { dateStyle: 'medium', timeZone: 'UTC' });
   // 名前の中の数字は数として比べる（「2」を「10」より前にする）
   const collator = new Intl.Collator('ja', { numeric: true });
 
@@ -394,7 +396,8 @@ function initSteamGames() {
   const byPlaytime = (a, b) => b.playtimeForever - a.playtimeForever;
   const compare = {
     playtime: byPlaytime,
-    recent: (a, b) => b.lastPlayed - a.lastPlayed || byPlaytime(a, b),
+    // 日付の文字列は、そのまま比べると日付の順になる。同じ日に遊んだゲームはプレイ時間の長い順
+    recent: (a, b) => (b.lastPlayedDate ?? '').localeCompare(a.lastPlayedDate ?? '') || byPlaytime(a, b),
     name: (a, b) => collator.compare(a.name, b.name),
     twoWeeks: (a, b) => b.playtime2Weeks - a.playtime2Weeks || byPlaytime(a, b),
   };
@@ -426,7 +429,7 @@ function initSteamGames() {
 
     const meta = [`合計 ${hours.format(game.playtimeForever / 60)} 時間`];
     if (game.playtime2Weeks > 0) meta.push(`最近2週間 ${hours.format(game.playtime2Weeks / 60)} 時間`);
-    if (game.lastPlayed > 0) meta.push(`最終プレイ ${date.format(game.lastPlayed * 1000)}`);
+    if (game.lastPlayedDate) meta.push(`最終プレイ ${playedDate.format(new Date(`${game.lastPlayedDate}T00:00:00Z`))}`);
     const metaLines = meta.map((text) => {
       const line = document.createElement('p');
       line.className = 'game-card__meta';
