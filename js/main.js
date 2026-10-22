@@ -278,8 +278,26 @@ function initTitleScrollSnap() {
   const profile = document.getElementById('profile');
   if (!header || !profile) return;
 
-  // 送っている間に届く残りのホイールやスワイプは、送る先がぶれないよう捨てる
+  // 送っている間と、送り終わってもひと続きのスクロールが止むまでは、届くホイールやスワイプを捨てる。
+  // トラックパッドやマウスの慣性のスクロールは指を離したあとも届き続けるので、送り終わった時点で受け付けると、
+  // トップ画面が外に出た位置で止まらずに先へ進んでしまう
   let moving = false;
+  let arrived = false;
+  let touching = false;
+  let lastWheel = 0;
+  // 慣性のホイールは数十 ms おきに届くので、これだけ途切れたらひと続きのスクロールが止んだとみなす
+  const WHEEL_QUIET = 300;
+
+  // 着いていて、指が離れていて、ホイールが途切れていたら受け付けを再開する
+  function release() {
+    if (!moving || !arrived || touching) return;
+    const wait = lastWheel + WHEEL_QUIET - performance.now();
+    if (wait > 0) {
+      setTimeout(release, wait);
+      return;
+    }
+    moving = false;
+  }
 
   // プロフィールの節の頭の、ヘッダーの下の端からの位置。0 より大きければトップ画面がまだ見えている
   // （ヘッダーの高さは小数になることがあるので、1px の差はそろっているとみなす）
@@ -300,10 +318,15 @@ function initTitleScrollSnap() {
     if (!shouldSkip(down, amount)) return;
     event.preventDefault();
     moving = true;
+    arrived = false;
     // ヘッダーの分は html の scroll-padding-top であける。動きを減らす設定では、CSS が滑らかなスクロールを止める
     if (down) profile.scrollIntoView({ block: 'start' });
     else window.scrollTo({ top: 0 });
-    const done = () => { moving = false; };
+    const done = () => {
+      if (arrived) return;
+      arrived = true;
+      release();
+    };
     if ('onscrollend' in window) window.addEventListener('scrollend', done, { once: true });
     // scrollend がないブラウザと、すでに着いていてスクロールが起きないときのため
     setTimeout(done, 1000);
@@ -311,6 +334,7 @@ function initTitleScrollSnap() {
 
   // ホイールの量は、行や画面の単位で届くこともあるので px に直す
   window.addEventListener('wheel', (event) => {
+    lastWheel = performance.now();
     if (event.deltaY === 0) return;
     const unit = [1, 16, window.innerHeight][event.deltaMode] ?? 1;
     skip(event, event.deltaY > 0, -event.deltaY * unit);
@@ -319,8 +343,17 @@ function initTitleScrollSnap() {
   // スマートフォンでは、指を上へ動かすとページを下へ、下へ動かすと上へ送る。開いたメニューの中は除く
   let touchY = null;
   window.addEventListener('touchstart', (event) => {
+    touching = true;
     touchY = event.target.closest('.site-nav') ? null : event.touches[0].clientY;
   }, { passive: true });
+  // 送ったあとも指を動かし続けていたら、指を離すまで受け付けない
+  ['touchend', 'touchcancel'].forEach((type) => {
+    window.addEventListener(type, (event) => {
+      if (event.touches.length) return;
+      touching = false;
+      release();
+    }, { passive: true });
+  });
   window.addEventListener('touchmove', (event) => {
     if (touchY === null) return;
     const distance = touchY - event.touches[0].clientY;
