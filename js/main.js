@@ -271,8 +271,8 @@ function initTitleGame() {
     .catch(() => figure.remove());
 }
 
-// トップ画面が見えている間に下へスクロールしたら、途中で止めずにプロフィールの節の頭まで送り、トップ画面を画面の外に出す。
-// 上へ戻るときは、ふつうにスクロールする
+// トップ画面とプロフィールの節の間は、途中で止めずに送る。トップ画面が見えている間に下へスクロールしたら
+// プロフィールの節の頭まで送ってトップ画面を画面の外に出し、そこから上へスクロールしたらページのいちばん上まで戻す
 function initTitleScrollSnap() {
   const header = document.querySelector('.site-header');
   const profile = document.getElementById('profile');
@@ -281,45 +281,59 @@ function initTitleScrollSnap() {
   // 送っている間に届く残りのホイールやスワイプは、送る先がぶれないよう捨てる
   let moving = false;
 
-  // プロフィールの節の頭がヘッダーの下より下にあれば、トップ画面がまだ見えている
-  const onTitle = () => profile.getBoundingClientRect().top > header.offsetHeight + 1;
+  // プロフィールの節の頭の、ヘッダーの下の端からの位置。0 より大きければトップ画面がまだ見えている
+  // （ヘッダーの高さは小数になることがあるので、1px の差はそろっているとみなす）
+  const profileOffset = () => profile.getBoundingClientRect().top - header.offsetHeight;
 
-  function skip(event) {
+  // 下へ送るのはトップ画面が見えているとき。上へ戻すのは、今のスクロールでプロフィールの節の頭より上に出るとき
+  // （amount はそのスクロールで上へ動く量。下のほうから大きく戻したときに、境目を越えた所で止めない）
+  function shouldSkip(down, amount) {
+    const offset = profileOffset();
+    return down ? offset > 1 : offset + amount > -2 && window.scrollY > 0;
+  }
+
+  function skip(event, down, amount = 0) {
     if (moving) {
       event.preventDefault();
-      return true;
+      return;
     }
-    if (!onTitle()) return false;
+    if (!shouldSkip(down, amount)) return;
     event.preventDefault();
     moving = true;
     // ヘッダーの分は html の scroll-padding-top であける。動きを減らす設定では、CSS が滑らかなスクロールを止める
-    profile.scrollIntoView({ block: 'start' });
+    if (down) profile.scrollIntoView({ block: 'start' });
+    else window.scrollTo({ top: 0 });
     const done = () => { moving = false; };
     if ('onscrollend' in window) window.addEventListener('scrollend', done, { once: true });
     // scrollend がないブラウザと、すでに着いていてスクロールが起きないときのため
     setTimeout(done, 1000);
-    return true;
   }
 
+  // ホイールの量は、行や画面の単位で届くこともあるので px に直す
   window.addEventListener('wheel', (event) => {
-    if (event.deltaY > 0 || moving) skip(event);
+    if (event.deltaY === 0) return;
+    const unit = [1, 16, window.innerHeight][event.deltaMode] ?? 1;
+    skip(event, event.deltaY > 0, -event.deltaY * unit);
   }, { passive: false });
 
-  // スマートフォンでは、指を上へ動かした（ページを下へ送る）ときだけ送る。開いたメニューの中は除く
+  // スマートフォンでは、指を上へ動かすとページを下へ、下へ動かすと上へ送る。開いたメニューの中は除く
   let touchY = null;
   window.addEventListener('touchstart', (event) => {
     touchY = event.target.closest('.site-nav') ? null : event.touches[0].clientY;
   }, { passive: true });
   window.addEventListener('touchmove', (event) => {
     if (touchY === null) return;
-    if (moving || touchY - event.touches[0].clientY > 10) skip(event);
+    const distance = touchY - event.touches[0].clientY;
+    if (moving || Math.abs(distance) > 10) skip(event, distance > 0, -distance);
   }, { passive: false });
 
   // 入力欄や選択肢、ボタンの上では、キーをその部品に任せる
   window.addEventListener('keydown', (event) => {
-    if (!['ArrowDown', 'PageDown', ' '].includes(event.key) || event.shiftKey) return;
     if (event.target.closest('input, textarea, select, button')) return;
-    skip(event);
+    const down = ['ArrowDown', 'PageDown'].includes(event.key) || (event.key === ' ' && !event.shiftKey);
+    const up = ['ArrowUp', 'PageUp'].includes(event.key) || (event.key === ' ' && event.shiftKey);
+    // 上へ動く量は、↑ならブラウザの1回分（40px ほど）、PageUp やスペースなら画面の高さほど
+    if (down || up) skip(event, down, event.key === 'ArrowUp' ? 40 : window.innerHeight);
   });
 }
 
