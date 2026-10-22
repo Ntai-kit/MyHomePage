@@ -179,10 +179,18 @@ function loadSteamGames() {
   return steamGamesRequest;
 }
 
-// ストアの横長の画像（460×215）。ストアが返した URL を使い、古い JSON で入っていないときは決まった形の URL を試す
+// ストアの横長の画像（460×215）。ストアが返した URL を使い、古い JSON で入っていないときは決まった形の URL を試す。
+// URL は CSS の url("…") にも埋めるので、Steam の画像の配信元のものだけを使い、URL の形に整えてから返す
+// （整えると " などの記号が % の形になり、CSS の指定を崩せない）
+const STEAM_IMAGE_ORIGIN = 'https://shared.akamai.steamstatic.com';
 function steamHeaderImage(game) {
-  return game.headerImage
-    ?? `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
+  const fallback = `${STEAM_IMAGE_ORIGIN}/store_item_assets/steam/apps/${Number(game.appid)}/header.jpg`;
+  try {
+    const url = new URL(game.headerImage);
+    return url.origin === STEAM_IMAGE_ORIGIN ? url.href : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 function steamStoreUrl(game) {
