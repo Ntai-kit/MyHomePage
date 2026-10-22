@@ -50,12 +50,12 @@ if (!body?.games) {
 
 const played = body.games.filter((game) => game.playtime_forever >= MIN_PLAYTIME_MINUTES);
 
-// ストアから、各ゲームの区分とタグを取る（この API はキーが要らない）
+// ストアから、各ゲームの区分とタグと画像の場所を取る（この API はキーが要らない）
 async function fetchStoreItems(appids) {
   const input = {
     ids: appids.map((appid) => ({ appid })),
     context: { language: 'japanese', country_code: 'JP' },
-    data_request: { include_tag_count: 20 },
+    data_request: { include_tag_count: 20, include_assets: true },
   };
   const storeUrl = new URL('https://api.steampowered.com/IStoreBrowseService/GetItems/v1/');
   storeUrl.searchParams.set('input_json', JSON.stringify(input));
@@ -70,9 +70,16 @@ async function fetchStoreItems(appids) {
 }
 
 const adultAppids = new Set();
+// ストアの横長の画像（460×215）の URL。新しいゲームは画像のファイル名が決まった形ではないので、ストアが返す名前を使う
+const headerImages = new Map();
 for (let i = 0; i < played.length; i += STORE_BATCH_SIZE) {
   const items = await fetchStoreItems(played.slice(i, i + STORE_BATCH_SIZE).map((game) => game.appid));
   for (const item of items) {
+    const { asset_url_format: format, header } = item.assets ?? {};
+    if (format && header) {
+      headerImages.set(item.appid, `https://shared.akamai.steamstatic.com/store_item_assets/${format.replace('${FILENAME}', header)}`);
+    }
+
     const descriptors = item.content_descriptorids ?? [];
     const tags = (item.tags ?? []).map((tag) => tag.tagid);
     if (descriptors.some((id) => ADULT_CONTENT_DESCRIPTORS.has(id)) || tags.some((id) => ADULT_TAGS.has(id))) {
@@ -93,6 +100,8 @@ const games = played
     playtime2Weeks: game.playtime_2weeks ?? 0,
     // UNIX 時間（秒）。記録がないゲームは 0
     lastPlayed: game.rtime_last_played ?? 0,
+    // ストアから取れなかったときは null（ページが決まった形の URL を試す）
+    headerImage: headerImages.get(game.appid) ?? null,
   }))
   .sort((a, b) => b.playtimeForever - a.playtimeForever);
 

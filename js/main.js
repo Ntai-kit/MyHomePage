@@ -197,7 +197,9 @@ function initSteamGames() {
     // 名前は横に文字で出すので、画像は読み上げない
     const image = document.createElement('img');
     image.className = 'game-card__image';
-    image.src = `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
+    // ストアが返した画像の URL を使う。古い JSON で入っていないときは、決まった形の URL を試す
+    image.src = game.headerImage
+      ?? `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
     image.alt = '';
     image.width = 460;
     image.height = 215;
@@ -240,7 +242,16 @@ function initSteamGames() {
 
   // 閉じている間は1行目のカードだけを出す。1行に並ぶ数は画面の幅で変わるので、グリッドの列の数を数える
   function applyLimit() {
+    // 列の数は、閉じた状態の並びで数える。開くと一覧の中にスクロールバーが出て幅が狭くなるが、
+    // 同じ列の数のままカードを少し狭めて並べる（css/base.css の .games.is-expanded）
+    // 数えるために一度閉じた形に戻すと一覧の中のスクロール位置が消えるので、覚えておいて戻す
+    const scrollTop = list.scrollTop;
+    list.classList.remove('is-expanded');
     const columns = getComputedStyle(list).gridTemplateColumns.split(' ').length;
+    list.style.setProperty('--games-columns', columns);
+    list.classList.toggle('is-expanded', expanded);
+    list.scrollTop = expanded ? scrollTop : 0;
+
     const items = [...list.children];
     items.forEach((item, i) => {
       item.hidden = !expanded && i >= columns;

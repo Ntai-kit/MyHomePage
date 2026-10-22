@@ -836,6 +836,18 @@ html:not(.js) .skill-bar__fill {
   transition: color 0.2s ease;
 }
 
+/* 「もっとみる」で開いたあとは、一覧の高さに上限を付け、その中だけでスクロールする。
+   選んだカードのカギ形の枠（外へ 6px はみ出す）が切れないよう、内側に余白を取り、その分だけ外へ広げる */
+.games.is-expanded {
+  /* 列の数は閉じたときと同じにする（数は js/main.js が入れる） */
+  grid-template-columns: repeat(var(--games-columns, 1), minmax(0, 1fr));
+  max-height: min(70vh, 640px);
+  margin: calc(var(--space-2) * -1);
+  padding: var(--space-2);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
 /* 2行目からは「もっとみる」で出す。ボタンはカードの下の真ん中に置く */
 .games__more-wrap {
   margin-top: var(--space-5);
