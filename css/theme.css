@@ -54,7 +54,7 @@ body {
   border: 2px solid var(--color-accent);
 }
 
-/* 押せないラベルは、角の丸みが小さい四角い細枠にする（押せる連絡先の丸いボタンと形を分ける） */
+/* 押せないラベルは、角の丸みが小さい四角い細枠にする（押せるボタンと形を分ける） */
 .work-card__tags li {
   padding: 0 var(--space-2);
   border: 1px solid var(--color-muted);

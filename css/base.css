@@ -160,6 +160,7 @@ h3 {
    押したときの色は :active で付けるので、ブラウザが重ねる灰色の四角は出さない */
 .nav-toggle,
 .site-nav__list a,
+/* 文字のボタンの土台（送信、もっとみる が使う） */
 .contact__link {
   transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
   -webkit-tap-highlight-color: transparent;
@@ -200,26 +201,14 @@ h3 {
   white-space: nowrap;
 }
 
-/* ドット文字のロゴ（2rem で幅 288px ほど）が横に収まらない幅では、本文の書体の太字にして小さくする。
+/* ドット文字のロゴ（2rem で幅 288px ほど）が開閉ボタンの横に収まらない 399px 以下では、本文の書体の太字にして小さくする。
    ドット文字は 16px の倍数でないとドットが崩れ、1rem まで下げるとメニューの文字と見分けがつかないため。
-   収まらないのは、メニューを開閉ボタンにする幅のうち 399px 以下と、メニューを横に並べる幅のうち 879px 以下 */
-@media (max-width: 399px), (min-width: 768px) and (max-width: 879px) {
-  .site-logo {
-    font-family: var(--font-body);
-    font-weight: 700;
-  }
-}
-
+   メニューを横に並べるのは 1040px 以上だけなので（下の .nav-toggle の指定）、そこではドット文字のまま収まる */
 @media (max-width: 399px) {
   .site-logo {
+    font-family: var(--font-body);
     font-size: 1.25rem;
-  }
-}
-
-/* メニューの項目と並ぶので、もう一段小さくする */
-@media (min-width: 768px) and (max-width: 879px) {
-  .site-logo {
-    font-size: 1.125rem;
+    font-weight: 700;
   }
 }
 
@@ -328,7 +317,9 @@ h3 {
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-@media (max-width: 767px) {
+/* メニューを横に並べると、ロゴ（288px）と項目（7つで 665px ほど）で 1000px 近くになる。
+   それより狭い 1039px 以下では、メニューを開閉ボタンにまとめる */
+@media (max-width: 1039px) {
   .nav-toggle {
     display: block;
   }
@@ -549,7 +540,7 @@ h3 {
   transition: transform 0.1s ease;
 }
 
-/* キーボードで選んだときは、連絡先のボタンと同じカギ形の枠で示す */
+/* キーボードで選んだときは、文字のボタンと同じカギ形の枠で示す */
 .icon-button:focus-visible {
   outline: none;
 }
@@ -1206,9 +1197,9 @@ html:not(.js) .games__more-wrap {
   }
 }
 
-/* 連絡先 */
+/* 各種サイト（GitHub、X、note のボタンの並び） */
 
-.contact {
+.link-list {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
@@ -1217,6 +1208,7 @@ html:not(.js) .games__more-wrap {
   list-style: none;
 }
 
+/* 文字のボタンの土台（送信、もっとみる が使う） */
 .contact__link {
   position: relative;
   display: inline-flex;
@@ -1241,10 +1233,6 @@ html:not(.js) .games__more-wrap {
 }
 
 /* お問い合わせフォーム */
-
-.contact-form__title {
-  margin-top: var(--space-7);
-}
 
 .contact-form {
   display: grid;
@@ -1312,7 +1300,7 @@ textarea.contact-form__input {
   color: var(--color-bg);
 }
 
-/* 押している間は、反転した背景を一段暗くする（連絡先のボタンの押したときの色より優先させる） */
+/* 押している間は、反転した背景を一段暗くする（.contact__link の押したときの色より優先させる） */
 .contact-form__submit:is(:hover, :focus-visible):active,
 .games__more:is(:hover, :focus-visible):active {
   background-color: var(--color-accent-pressed);

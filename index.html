@@ -42,7 +42,8 @@
           <li><a href="#works">作品</a></li>
           <li><a href="#skills">スキル</a></li>
           <li><a href="#career">経歴</a></li>
-          <li><a href="#contact">連絡先</a></li>
+          <li><a href="#links">各種サイト</a></li>
+          <li><a href="#contact">お問い合わせ</a></li>
         </ul>
         <!-- 今見ている節を囲むカギ形の枠。位置は js/main.js の initNavCursor が決める -->
         <span class="nav-cursor" aria-hidden="true">
@@ -61,7 +62,7 @@
       <div class="container title-screen__inner">
         <div class="title-screen__text">
           <p class="title-screen__copy" id="title-screen-copy">人生、攻略中</p>
-          <!-- GitHub、X、note は、連絡先の節のボタンと同じリンク先にする -->
+          <!-- GitHub、X、note は、各種サイトの節のボタンと同じリンク先にする -->
           <ul class="title-screen__links">
             <li>
               <a class="icon-button" href="#contact-form" aria-label="お問い合わせ" title="お問い合わせ">
@@ -82,7 +83,7 @@
             </li>
             <li>
               <a class="icon-button" href="https://note.com/ntaaaaaaaaai" target="_blank" rel="noopener" aria-label="note" title="note">
-                <!-- note の公式の白い「n」のアイコン。入手元とガイドラインは、連絡先の節の同じボタンを参照 -->
+                <!-- note の公式の白い「n」のアイコン。入手元とガイドラインは、各種サイトの節の同じボタンを参照 -->
                 <img class="icon-button__icon icon-button__icon--fill" src="images/note-icon-white.svg" alt="" width="493" height="493">
               </a>
             </li>
@@ -273,11 +274,11 @@
       </div>
     </section>
 
-    <section class="section" id="contact">
+    <section class="section" id="links">
       <div class="container">
-        <h2 class="section__title">連絡先</h2>
+        <h2 class="section__title">各種サイト</h2>
         <!-- GitHub、X、note は、トップ画面のボタンと同じリンク先にする -->
-        <ul class="contact">
+        <ul class="link-list">
           <li>
             <a class="icon-button" href="https://github.com/Ntai-kit" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
               <img class="icon-button__icon icon-button__icon--logo" src="images/github-invertocat-white.svg" alt="" width="98" height="96" loading="lazy">
@@ -296,9 +297,13 @@
             </a>
           </li>
         </ul>
+      </div>
+    </section>
 
+    <section class="section" id="contact">
+      <div class="container">
+        <h2 class="section__title">お問い合わせ</h2>
         <!-- お問い合わせフォーム。送られた内容は Formspree から、登録したメールアドレスに届く -->
-        <h3 class="subsection__title contact-form__title">お問い合わせ</h3>
         <form class="contact-form" id="contact-form" action="https://formspree.io/f/mvkzeyvb" method="POST">
           <input type="hidden" name="_subject" value="ホームページからのお問い合わせ">
           <div class="contact-form__field">
