@@ -271,6 +271,58 @@ function initTitleGame() {
     .catch(() => figure.remove());
 }
 
+// トップ画面が見えている間に下へスクロールしたら、途中で止めずにプロフィールの節の頭まで送り、トップ画面を画面の外に出す。
+// 上へ戻るときは、ふつうにスクロールする
+function initTitleScrollSnap() {
+  const header = document.querySelector('.site-header');
+  const profile = document.getElementById('profile');
+  if (!header || !profile) return;
+
+  // 送っている間に届く残りのホイールやスワイプは、送る先がぶれないよう捨てる
+  let moving = false;
+
+  // プロフィールの節の頭がヘッダーの下より下にあれば、トップ画面がまだ見えている
+  const onTitle = () => profile.getBoundingClientRect().top > header.offsetHeight + 1;
+
+  function skip(event) {
+    if (moving) {
+      event.preventDefault();
+      return true;
+    }
+    if (!onTitle()) return false;
+    event.preventDefault();
+    moving = true;
+    // ヘッダーの分は html の scroll-padding-top であける。動きを減らす設定では、CSS が滑らかなスクロールを止める
+    profile.scrollIntoView({ block: 'start' });
+    const done = () => { moving = false; };
+    if ('onscrollend' in window) window.addEventListener('scrollend', done, { once: true });
+    // scrollend がないブラウザと、すでに着いていてスクロールが起きないときのため
+    setTimeout(done, 1000);
+    return true;
+  }
+
+  window.addEventListener('wheel', (event) => {
+    if (event.deltaY > 0 || moving) skip(event);
+  }, { passive: false });
+
+  // スマートフォンでは、指を上へ動かした（ページを下へ送る）ときだけ送る。開いたメニューの中は除く
+  let touchY = null;
+  window.addEventListener('touchstart', (event) => {
+    touchY = event.target.closest('.site-nav') ? null : event.touches[0].clientY;
+  }, { passive: true });
+  window.addEventListener('touchmove', (event) => {
+    if (touchY === null) return;
+    if (moving || touchY - event.touches[0].clientY > 10) skip(event);
+  }, { passive: false });
+
+  // 入力欄や選択肢、ボタンの上では、キーをその部品に任せる
+  window.addEventListener('keydown', (event) => {
+    if (!['ArrowDown', 'PageDown', ' '].includes(event.key) || event.shiftKey) return;
+    if (event.target.closest('input, textarea, select, button')) return;
+    skip(event);
+  });
+}
+
 // プレイしたゲームの一覧。data/steam-games.json を読み、選んだ順に並べる
 function initSteamGames() {
   const list = document.getElementById('games-list');
@@ -446,5 +498,6 @@ initNavToggle();
 initNavCursor();
 initSkillBars();
 initTitleGame();
+initTitleScrollSnap();
 initSteamGames();
 initContactForm();
