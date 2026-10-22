@@ -1023,6 +1023,33 @@ html:not(.js) .games__more-wrap {
   scrollbar-gutter: stable;
 }
 
+/* Steam 以外のゲーム。Steam の一覧（と「もっとみる」）との間をあける */
+.games__other-title {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+/* 名前だけのカードは背が低いので、間を詰める。幅は、いちばん長い名前（デュエル・マスターズ プレイス）が
+   2行までに収まる 200px を下限にする（スマートフォンでは1列、広い画面では4列） */
+.games--text {
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+  gap: var(--space-3);
+}
+
+/* 画像のない、名前だけのカード。押せる高さを取り、名前を縦の真ん中に置く */
+.game-card--text {
+  justify-content: center;
+  min-height: 64px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.game-card--text .game-card__name {
+  font-weight: 700;
+  line-height: 1.5;
+  /* 「プレ/イス」のように語の途中で折り返さないよう、文節で折り返す */
+  word-break: auto-phrase;
+}
+
 /* 2行目からは「もっとみる」で出す。ボタンはカードの下の真ん中に置く */
 .games__more-wrap {
   margin-top: var(--space-5);
