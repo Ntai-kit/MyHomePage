@@ -568,6 +568,18 @@ function initContactForm() {
   });
 }
 
+// ページ内リンクで移動したあと、アドレスバーの URL から #… を消す。
+// 移動そのものはブラウザに任せる（スクロールとフォーカスの移り先がふつうのリンクと同じになる）
+function initCleanHash() {
+  const clean = () => {
+    if (!window.location.hash) return;
+    history.replaceState(history.state, '', window.location.pathname + window.location.search);
+  };
+  window.addEventListener('hashchange', clean);
+  // # の付いた URL で開いたときも、その位置へ移ったあとで消す
+  window.addEventListener('load', clean);
+}
+
 initNavToggle();
 initNavCursor();
 initSkillBars();
@@ -575,3 +587,4 @@ initTitleGame();
 initTitleScrollSnap();
 initSteamGames();
 initContactForm();
+initCleanHash();
